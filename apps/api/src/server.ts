@@ -5,6 +5,8 @@ import { config } from './config.js';
 import { pg, mongo } from './db.js';
 import authPlugin from './plugins/auth.js';
 import authRoutes from './modules/auth/auth.routes.js';
+import blogRoutes from './modules/blog/blog.routes.js';
+import analyticsRoutes from './modules/analytics/analytics.routes.js';
 
 const app = Fastify({ logger: true });
 
@@ -15,6 +17,8 @@ await app.register(cors, {
 await app.register(rateLimit, { global: false });
 await app.register(authPlugin);
 await app.register(authRoutes, { prefix: '/api/auth' });
+await app.register(blogRoutes, { prefix: '/api' });
+await app.register(analyticsRoutes, { prefix: '/api' });
 
 app.get('/health', async () => {
   await pg.query('SELECT 1');

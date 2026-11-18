@@ -11,6 +11,7 @@ export const config = {
   mongoUri: need('MONGODB_URI'),
   jwtAccessSecret: need('JWT_ACCESS_SECRET'),
   refreshSecret: need('JWT_REFRESH_SECRET'),
+  analyticsSalt: need('ANALYTICS_SALT'),
   accessTtl: '15m',
   refreshTtlMs: 7 * 24 * 60 * 60 * 1000,
 };
