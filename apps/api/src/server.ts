@@ -1,10 +1,20 @@
 import Fastify from 'fastify';
-import { Pool } from 'pg';
-import { MongoClient } from 'mongodb';
+import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
+import { config } from './config.js';
+import { pg, mongo } from './db.js';
+import authPlugin from './plugins/auth.js';
+import authRoutes from './modules/auth/auth.routes.js';
 
 const app = Fastify({ logger: true });
-const pg = new Pool({ connectionString: process.env.DATABASE_URL });
-const mongo = new MongoClient(process.env.MONGODB_URI!);
+
+await app.register(cors, {
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+});
+await app.register(rateLimit, { global: false });
+await app.register(authPlugin);
+await app.register(authRoutes, { prefix: '/api/auth' });
 
 app.get('/health', async () => {
   await pg.query('SELECT 1');
@@ -13,4 +23,4 @@ app.get('/health', async () => {
 });
 
 await mongo.connect();
-await app.listen({ port: 4000, host: '127.0.0.1' });
+await app.listen({ port: config.port, host: '127.0.0.1' });
